@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Autos</title>
+    <link rel="icon" sizes="32x32" href="favicon.ico">
+    <meta name="theme-color" content="#099D0B">
+    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="estilos.css">
+    <script type="module" src="lib/registraServiceWorker.js"></script>
+    <script src="lib/polycustom.js"></script>
+    <script type="module" src="mi-footer.js"></script>
+  </head>
+  <body>
+    <center>
+    <form id="vista">
+      <header>
+        <a href="index.html">Cancelar</a>
+        <button type="submit">Guardar auto</button>
+        <button id="eliminar" type="button">Eliminar auto</button>
+        <h1><output id="título"><progress max="100">Cargando…</progress></h1>
+        <br>
+      </header>
+      <br><br><br>
+      <h1><b>Editando el auto:</b></h1>
+      <p style="color: white;">Modelo del auto: <input id="modelo" type="text" placeholder="Modelo" pattern="[A-Za-z0-9_-]{4,15}" required></p>
+      <p style="color: white;">Marca del auto: <input id="marca" type="text" placeholder="Marca" pattern="[A-Za-z0-9_-]{4,15}" required></p>
+      <br><br><br>
+      <footer is="mi-footer"></footer>
+    </form>
+    </center>
+    <script src="/__/firebase/7.2.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.2.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <script type="module">
+      import { error } from "./lib/util.js";
+      const parametros = new URLSearchParams(location.search);
+      const id = parametros.get("id");
+      const firestore = firebase.firestore();
+      firestore.enablePersistence()
+        .catch(error)
+        .then(busca);
+      async function busca() {
+        try {
+          const doc = await firestore.collection("AUTOS").doc(id).get();
+          if (doc.exists) {
+            const autos = doc.data();
+            document.title = autos.AUTO_MODELO;
+            título.value = autos.AUTO_MODELO;
+            modelo.value = autos.AUTO_MODELO;
+            marca.value = autos.AUTO_MARCA;
+            vista.addEventListener("submit", guarda);
+            eliminar.addEventListener("click", elimina);
+          } else {
+            alert("Auto no encontrado");
+          }
+        } catch (e) {
+          error(e)
+        }
+      }
+      async function guarda(evt) {
+        try {
+          evt.preventDefault();
+          const AUTO_MODELO = modelo.value.trim();
+          const AUTO_MARCA = marca.value.trim();
+          const autos = { AUTO_MODELO,AUTO_MARCA };
+          await firestore.collection("AUTOS").doc(id).set(autos);
+          document.location = "index.html";
+        } catch (e) {
+          error(e)
+        }
+      }
+
+      
+
+      async function elimina() {
+        try {
+          await firestore.collection("AUTOS").doc(id).delete();
+          document.location = "index.html";
+        } catch (e) {
+          error(e)
+        }
+      }
+    </script>
+  </body>
+</html>

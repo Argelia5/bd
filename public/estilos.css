@@ -1,0 +1,21 @@
+body {
+	background: #00FFFF;
+  	max-width: 600px;
+ 	margin-left: auto;
+  	margin-right: auto;
+}
+ 
+body, a {
+  	font-family: sans-serif;
+  	color: white;
+}
+header{
+	background: #CC3399;
+}
+button{
+	margin-top: 10px;
+	margin-left: 55px;
+	margin-right: 55px;
+	color: white;
+	background: #CC3399;
+}
